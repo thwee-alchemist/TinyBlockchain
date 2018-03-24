@@ -49,7 +49,7 @@ def create_genesis_block():
         datetime.datetime.now().isoformat(), 
         {
             'proof-of-work': 9,
-            'transactions': []
+            'transactions': None
         }, 
         '0'
     )
@@ -136,13 +136,15 @@ def find_new_chains():
     for node_url in peer_nodes:
         
         try:
-            block = requests.get(node_url + '/blocks').content
+            block = request.get(node_url + '/blocks').content
+            block = json.loads(block)
+            other_chains.append(block)
+
         except:
             peer_nodes.remove(node_url)
+            print('removed ', node_url)
             
-        block = json.loads(block)
-        other_chains.append(block)
-    return other_chains
+        return other_chains
     
 def consensus():
     other_chains = find_new_chains()
